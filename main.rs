@@ -95,23 +95,23 @@ async fn main() -> Result<()> {
     let rpc_client = RpcClient::new_with_commitment(rpc_url.to_string(),commitment);
 
 
-    //Initialize wallet from private key of .env
-    let private_key_str = env::var("PRIVATE_KEY")
-        .context("PRIVATE_KEY environment variable not found")?;
-    let private_key_bytes = bs58::decode(private_key_str)
-        .into_vec()
-        .context("Failed to decode private key from base58")?;
-    let wallet = Keypair::from_bytes(&private_key_bytes)
-        .context("Failed to create Keypair from bytes")?;
-    let public_key= wallet.pubkey();
-    println!("Public Key: {}", public_key.to_string());
+    // //Initialize wallet from private key of .env
+    // let private_key_str = env::var("PRIVATE_KEY")
+    //     .context("PRIVATE_KEY environment variable not found")?;
+    // let private_key_bytes = bs58::decode(private_key_str)
+    //     .into_vec()
+    //     .context("Failed to decode private key from base58")?;
+    // let wallet = Keypair::from_bytes(&private_key_bytes)
+    //     .context("Failed to create Keypair from bytes")?;
+    // let public_key= wallet.pubkey();
+    // println!("Public Key: {}", public_key.to_string());
 
     let rpc_client_arc=Arc::new(rpc_client);
     let rpc_client_tpu=Arc::clone(&rpc_client_arc);
     let rpc_client_jito=Arc::clone(&rpc_client_arc);
-    let mut tpu_client_config=TpuClientConfig::default();
-    tpu_client_config.fanout_slots=5;
-    let tpu_client=TpuClient::new(rpc_client_arc,"ws://localhost:8900", tpu_client_config)?;
+    // let mut tpu_client_config=TpuClientConfig::default();
+    // tpu_client_config.fanout_slots=5;
+    // let tpu_client=TpuClient::new(rpc_client_arc,"ws://localhost:8900", tpu_client_config)?;
 
 
     // swap_pumpfun_token_finish_jito(&rpc_client_jito, &http_client, &wallet, "6cPEZD2UK51pZpeUJCFUek4bQ28s5L1gfr4mGWrjpump", "DB52REhfC5jp7UXSLtsLFsTY5yXxnjzqNycEhkQRf6fQ", "7ChWHX4x7cDA4vgYor5T3ahcq1pBWwdFaYrT2STmExDN",1000000000, true).await;
