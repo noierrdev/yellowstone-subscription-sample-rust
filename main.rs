@@ -1,18 +1,10 @@
 use anyhow::{Context, Result};
-use tokio::time::{self, Duration, interval};
-use tokio::task;
-use futures::future;
 use clap::Parser;
-use futures::{sink::SinkExt, stream::StreamExt};
-use log::{info,error};
+use futures::{ stream::StreamExt};
 use std::{
     env, collections::HashMap,
-    time::{ Instant, SystemTime, UNIX_EPOCH},
-    fs::{self, File}, path::Path,
     sync::Arc
 };
-use bincode;
-use hex;
 
 use reqwest::Client;
 
@@ -21,19 +13,11 @@ use serde_json::Value;
 
 use solana_client::{
     rpc_client::RpcClient,
-    tpu_client::{TpuClient, TpuClientConfig}
 };
 use solana_sdk::{
     bs58,
-    signature::{Keypair,Signature,Signer},
-    pubkey::Pubkey,
+    signature::{Signature},
     commitment_config::CommitmentConfig,
-    system_program::id as system_program_id,
-    message::Message,
-    transaction::Transaction,
-    system_instruction,
-    hash::Hash,
-    compute_budget::{ComputeBudgetInstruction}
 };
 use solana_transaction_status::UiTransactionEncoding;
 
@@ -77,22 +61,10 @@ async fn main() -> Result<()> {
     
     
     dotenv::dotenv().ok();
-    let http_client=Client::new();
-
-    let JITO_TIP_ACCOUNTS: Vec<String>=vec![
-        "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5".to_string(),
-        "HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe".to_string(),
-        "Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY".to_string(),
-        "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49".to_string(),
-        "DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh".to_string(),
-        "ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt".to_string(),
-        "DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL".to_string(),
-        "3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT".to_string()
-    ];
     //Create web3 connection
-    let rpc_url = "http://localhost:8899";
-    let commitment = CommitmentConfig::processed();
-    let rpc_client = RpcClient::new_with_commitment(rpc_url.to_string(),commitment);
+    // let rpc_url = "http://localhost:8899";
+    // let commitment = CommitmentConfig::processed();
+    // let rpc_client = RpcClient::new_with_commitment(rpc_url.to_string(),commitment);
 
 
     // //Initialize wallet from private key of .env
@@ -106,19 +78,10 @@ async fn main() -> Result<()> {
     // let public_key= wallet.pubkey();
     // println!("Public Key: {}", public_key.to_string());
 
-    let rpc_client_arc=Arc::new(rpc_client);
-    let rpc_client_tpu=Arc::clone(&rpc_client_arc);
-    let rpc_client_jito=Arc::clone(&rpc_client_arc);
-    // let mut tpu_client_config=TpuClientConfig::default();
-    // tpu_client_config.fanout_slots=5;
-    // let tpu_client=TpuClient::new(rpc_client_arc,"ws://localhost:8900", tpu_client_config)?;
-
-
-    // swap_pumpfun_token_finish_jito(&rpc_client_jito, &http_client, &wallet, "6cPEZD2UK51pZpeUJCFUek4bQ28s5L1gfr4mGWrjpump", "DB52REhfC5jp7UXSLtsLFsTY5yXxnjzqNycEhkQRf6fQ", "7ChWHX4x7cDA4vgYor5T3ahcq1pBWwdFaYrT2STmExDN",1000000000, true).await;
+    // let rpc_client_arc=Arc::new(rpc_client);
     
 
 
-    let JITO_TIP_ACCOUNTS_2=JITO_TIP_ACCOUNTS.clone();
     let other_task = tokio::spawn(async move {
         
         let mut client = GeyserGrpcClient::build_from_shared("http://localhost:10000").expect("REASON")
